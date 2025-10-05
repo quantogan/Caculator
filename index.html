@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Máy Tính Giảm Giá Aeon</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            
+            .container {
+                padding: 30px;
+            }
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 28px;
+            }
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .discount-input {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .discount-input label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .discount-input input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .discount-input input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .products-section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .product-item {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            align-items: end;
+        }
+        
+        @media (min-width: 768px) {
+            .product-item {
+                grid-template-columns: 2fr 1fr 1fr;
+            }
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .input-group label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .product-item input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .product-item input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #38a169;
+        }
+        
+        .btn-danger {
+            background: #f56565;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+        
+        .btn-warning {
+            background: #ed8936;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #dd6b20;
+        }
+        
+        .buttons-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        @media (min-width: 768px) {
+            .buttons-group {
+                flex-direction: row;
+                gap: 15px;
+            }
+        }
+        
+        .results {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 25px;
+        }
+        
+        .results h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        @media (min-width: 640px) {
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .result-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        .result-card {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .result-card h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+        
+        .result-card p {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            font-size: 12px;
+            display: block;
+            overflow-x: auto;
+        }
+        
+        @media (min-width: 768px) {
+            .comparison-table {
+                font-size: 14px;
+                display: table;
+            }
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            white-space: nowrap;
+        }
+        
+        @media (min-width: 768px) {
+            .comparison-table th,
+            .comparison-table td {
+                padding: 12px;
+            }
+        }
+        
+        .comparison-table th {
+            background: rgba(255,255,255,0.1);
+            font-weight: 600;
+        }
+        
+        .formula-box {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .formula-box h3 {
+            margin-bottom: 10px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛒 Máy Tính Giảm Giá Aeon</h1>
+        <p class="subtitle">Tính toán % giảm giá một lần tương đương với giảm giá hai lần</p>
+        
+        <div class="discount-input">
+            <label>% Giảm Lần 2 (Áp dụng cho tổng hóa đơn):</label>
+            <input type="number" id="discount2" value="20" min="0" max="100" step="0.1">
+        </div>
+        
+        <div class="products-section">
+            <h2 class="section-title">Danh Sách Sản Phẩm</h2>
+            <div id="productsList"></div>
+        </div>
+        
+        <div class="buttons-group">
+            <button class="btn btn-success" onclick="addProduct()">+ Thêm Sản Phẩm</button>
+            <button class="btn btn-primary" onclick="calculate()">Tính Toán</button>
+            <button class="btn btn-warning" onclick="resetAll()">🔄 Làm Mới Toàn Bộ</button>
+        </div>
+        
+        <div id="results" class="results hidden"></div>
+    </div>
+
+    <script>
+        let products = [];
+        let productIdCounter = 0;
+
+        function addProduct() {
+            const product = {
+                id: productIdCounter++,
+                name: '',
+                price: 0,
+                discount1: 0
+            };
+            products.push(product);
+            renderProducts();
+        }
+
+        function removeProduct(id) {
+            products = products.filter(p => p.id !== id);
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('productsList');
+            
+            if (products.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">Chưa có sản phẩm nào. Nhấn "Thêm Sản Phẩm" để bắt đầu.</p>';
+                return;
+            }
+            
+            container.innerHTML = products.map(product => `
+                <div class="product-item">
+                    <div class="input-group">
+                        <label>Tên sản phẩm</label>
+                        <input type="text" placeholder="Nhập tên sản phẩm" value="${product.name}" 
+                               onchange="updateProduct(${product.id}, 'name', this.value)">
+                    </div>
+                    <div class="input-group">
+                        <label>Giá gốc (VNĐ)</label>
+                        <input type="number" placeholder="0" value="${product.price || ''}" 
+                               onchange="updateProduct(${product.id}, 'price', parseFloat(this.value) || 0)">
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: end;">
+                        <div class="input-group" style="flex: 1;">
+                            <label>% Giảm lần 1</label>
+                            <input type="number" placeholder="0" value="${product.discount1 || ''}" 
+                                   onchange="updateProduct(${product.id}, 'discount1', parseFloat(this.value) || 0)"
+                                   min="0" max="100" step="0.1">
+                        </div>
+                        <button class="btn btn-danger" onclick="removeProduct(${product.id})">Xóa</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateProduct(id, field, value) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                product[field] = value;
+            }
+        }
+
+        function resetAll() {
+            if (confirm('Bạn có chắc chắn muốn xóa tất cả và làm mới?')) {
+                products = [];
+                productIdCounter = 0;
+                document.getElementById('discount2').value = '';
+                document.getElementById('results').classList.add('hidden');
+                renderProducts();
+            }
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(amount);
+        }
+
+        function calculate() {
+            const discount2 = parseFloat(document.getElementById('discount2').value) || 0;
+            
+            if (products.length === 0) {
+                alert('Vui lòng thêm ít nhất một sản phẩm!');
+                return;
+            }
+
+            // Tính toán theo phương pháp giảm 2 lần
+            let resultsDouble = [];
+            let totalAfterDiscount1 = 0;
+            
+            products.forEach(product => {
+                const priceAfterDiscount1 = product.price * (1 - product.discount1 / 100);
+                totalAfterDiscount1 += priceAfterDiscount1;
+                resultsDouble.push({
+                    name: product.name || 'Sản phẩm',
+                    originalPrice: product.price,
+                    discount1Percent: product.discount1,
+                    priceAfterDiscount1: priceAfterDiscount1
+                });
+            });
+            
+            const totalAfterDiscount2 = totalAfterDiscount1 * (1 - discount2 / 100);
+
+            // Tính toán % giảm một lần tương đương
+            let resultsSingle = [];
+            let totalSingleDiscount = 0;
+            
+            products.forEach(product => {
+                // Tính giá cuối nếu giảm 2 lần
+                const finalPrice = product.price * (1 - product.discount1 / 100) * (1 - discount2 / 100);
+                
+                // Tính % còn lại
+                const percentRemaining = (finalPrice / product.price) * 100;
+                
+                // Tính % cần giảm trong 1 lần
+                const singleDiscountPercent = 100 - percentRemaining;
+                
+                // Tính giá sau khi giảm 1 lần
+                const priceAfterSingleDiscount = product.price * (1 - singleDiscountPercent / 100);
+                
+                totalSingleDiscount += priceAfterSingleDiscount;
+                
+                resultsSingle.push({
+                    name: product.name || 'Sản phẩm',
+                    originalPrice: product.price,
+                    singleDiscountPercent: singleDiscountPercent,
+                    finalPrice: priceAfterSingleDiscount
+                });
+            });
+
+            displayResults(resultsDouble, resultsSingle, totalAfterDiscount1, totalAfterDiscount2, totalSingleDiscount, discount2);
+        }
+
+        function displayResults(resultsDouble, resultsSingle, totalAfterDiscount1, totalAfterDiscount2, totalSingleDiscount, discount2) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.classList.remove('hidden');
+            
+            resultsDiv.innerHTML = `
+                <h2>📊 Kết Quả Tính Toán</h2>
+                
+                <div class="result-grid">
+                    <div class="result-card">
+                        <h3>Tổng hóa đơn gốc</h3>
+                        <p>${formatCurrency(resultsDouble.reduce((sum, r) => sum + r.originalPrice, 0))}</p>
+                    </div>
+                    <div class="result-card">
+                        <h3>Tổng sau giảm 2 lần theo cách bình thường</h3>
+                        <p>${formatCurrency(totalAfterDiscount2)}</p>
+                    </div>
+                    <div class="result-card">
+                        <h3>Tổng sau giảm gộp thành 1 lần theo quy định của AEON</h3>
+                        <p>${formatCurrency(totalSingleDiscount)}</p>
+                    </div>
+                    <div class="result-card">
+                        <h3>So sánh chênh lệch</h3>
+                        <p>${formatCurrency(Math.abs(totalAfterDiscount2 - totalSingleDiscount))}</p>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 25px; margin-bottom: 15px;">Chi Tiết Từng Sản Phẩm</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Giá gốc</th>
+                            <th>% Giảm 2 lần</th>
+                            <th>% Gộp giảm thành 1 lần</th>
+                            <th>Giá cuối</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${resultsSingle.map((r, i) => `
+                            <tr>
+                                <td>${r.name}</td>
+                                <td>${formatCurrency(r.originalPrice)}</td>
+                                <td>${resultsDouble[i].discount1Percent.toFixed(1)}% + ${discount2}%</td>
+                                <td><strong>${r.singleDiscountPercent.toFixed(2)}%</strong></td>
+                                <td>${formatCurrency(r.finalPrice)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+
+                <div class="formula-box">
+                    <h3>📐 Công Thức Tính</h3>
+                    <p><strong>Bước 1:</strong> Giá cuối = Giá gốc × (1 - %giảm lần 1) × (1 - %giảm lần 2)</p>
+                    <p><strong>Bước 2:</strong> % còn lại = (Giá cuối / Giá gốc) × 100%</p>
+                    <p><strong>Bước 3:</strong> % giảm 1 lần = 100% - % còn lại</p>
+                </div>
+            `;
+        }
+
+        // Thêm 2 sản phẩm mẫu khi tải trang
+        window.onload = function() {
+            addProduct();
+            products[0].name = 'Áo 1';
+            products[0].price = 309000;
+            products[0].discount1 = 20;
+            
+            addProduct();
+            products[1].name = 'Áo 2';
+            products[1].price = 315000;
+            products[1].discount1 = 25;
+            
+            renderProducts();
+        };
+    </script>
+</body>
+</html>
