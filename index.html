@@ -19,7 +19,7 @@
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
@@ -110,7 +110,7 @@
         
         @media (min-width: 768px) {
             .product-item {
-                grid-template-columns: 2fr 1fr 1fr;
+                grid-template-columns: 2fr 1fr 0.8fr 1fr;
             }
         }
         
@@ -338,6 +338,7 @@
                 id: productIdCounter++,
                 name: '',
                 price: 0,
+                quantity: 1,
                 discount1: 0
             };
             products.push(product);
@@ -368,6 +369,12 @@
                         <label>Giá gốc (VNĐ)</label>
                         <input type="number" placeholder="0" value="${product.price || ''}" 
                                onchange="updateProduct(${product.id}, 'price', parseFloat(this.value) || 0)">
+                    </div>
+                    <div class="input-group">
+                        <label>Số lượng</label>
+                        <input type="number" placeholder="1" value="${product.quantity || 1}" 
+                               onchange="updateProduct(${product.id}, 'quantity', parseInt(this.value) || 1)"
+                               min="1" step="1">
                     </div>
                     <div style="display: flex; gap: 10px; align-items: end;">
                         <div class="input-group" style="flex: 1;">
@@ -417,13 +424,21 @@
             // Tính toán theo phương pháp giảm 2 lần
             let resultsDouble = [];
             let totalAfterDiscount1 = 0;
+            let totalOriginal = 0;
             
             products.forEach(product => {
-                const priceAfterDiscount1 = product.price * (1 - product.discount1 / 100);
+                const quantity = product.quantity || 1;
+                const totalPrice = product.price * quantity;
+                const priceAfterDiscount1 = totalPrice * (1 - product.discount1 / 100);
+                
+                totalOriginal += totalPrice;
                 totalAfterDiscount1 += priceAfterDiscount1;
+                
                 resultsDouble.push({
                     name: product.name || 'Sản phẩm',
                     originalPrice: product.price,
+                    quantity: quantity,
+                    totalPrice: totalPrice,
                     discount1Percent: product.discount1,
                     priceAfterDiscount1: priceAfterDiscount1
                 });
@@ -436,32 +451,37 @@
             let totalSingleDiscount = 0;
             
             products.forEach(product => {
-                // Tính giá cuối nếu giảm 2 lần
-                const finalPrice = product.price * (1 - product.discount1 / 100) * (1 - discount2 / 100);
+                const quantity = product.quantity || 1;
+                const totalPrice = product.price * quantity;
+                
+                // Tính giá cuối nếu giảm 2 lần (cho tổng giá trị sản phẩm)
+                const finalPrice = totalPrice * (1 - product.discount1 / 100) * (1 - discount2 / 100);
                 
                 // Tính % còn lại
-                const percentRemaining = (finalPrice / product.price) * 100;
+                const percentRemaining = (finalPrice / totalPrice) * 100;
                 
                 // Tính % cần giảm trong 1 lần
                 const singleDiscountPercent = 100 - percentRemaining;
                 
                 // Tính giá sau khi giảm 1 lần
-                const priceAfterSingleDiscount = product.price * (1 - singleDiscountPercent / 100);
+                const priceAfterSingleDiscount = totalPrice * (1 - singleDiscountPercent / 100);
                 
                 totalSingleDiscount += priceAfterSingleDiscount;
                 
                 resultsSingle.push({
                     name: product.name || 'Sản phẩm',
                     originalPrice: product.price,
+                    quantity: quantity,
+                    totalPrice: totalPrice,
                     singleDiscountPercent: singleDiscountPercent,
                     finalPrice: priceAfterSingleDiscount
                 });
             });
 
-            displayResults(resultsDouble, resultsSingle, totalAfterDiscount1, totalAfterDiscount2, totalSingleDiscount, discount2);
+            displayResults(resultsDouble, resultsSingle, totalOriginal, totalAfterDiscount1, totalAfterDiscount2, totalSingleDiscount, discount2);
         }
 
-        function displayResults(resultsDouble, resultsSingle, totalAfterDiscount1, totalAfterDiscount2, totalSingleDiscount, discount2) {
+        function displayResults(resultsDouble, resultsSingle, totalOriginal, totalAfterDiscount1, totalAfterDiscount2, totalSingleDiscount, discount2) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.classList.remove('hidden');
             
@@ -471,7 +491,7 @@
                 <div class="result-grid">
                     <div class="result-card">
                         <h3>Tổng hóa đơn gốc</h3>
-                        <p>${formatCurrency(resultsDouble.reduce((sum, r) => sum + r.originalPrice, 0))}</p>
+                        <p>${formatCurrency(totalOriginal)}</p>
                     </div>
                     <div class="result-card">
                         <h3>Tổng sau giảm 2 lần theo cách bình thường</h3>
@@ -493,6 +513,8 @@
                         <tr>
                             <th>Sản phẩm</th>
                             <th>Giá gốc</th>
+                            <th>SL</th>
+                            <th>Tổng giá</th>
                             <th>% Giảm 2 lần</th>
                             <th>% Gộp giảm thành 1 lần</th>
                             <th>Giá cuối</th>
@@ -503,6 +525,8 @@
                             <tr>
                                 <td>${r.name}</td>
                                 <td>${formatCurrency(r.originalPrice)}</td>
+                                <td>${r.quantity}</td>
+                                <td>${formatCurrency(r.totalPrice)}</td>
                                 <td>${resultsDouble[i].discount1Percent.toFixed(1)}% + ${discount2}%</td>
                                 <td><strong>${r.singleDiscountPercent.toFixed(2)}%</strong></td>
                                 <td>${formatCurrency(r.finalPrice)}</td>
@@ -513,9 +537,10 @@
 
                 <div class="formula-box">
                     <h3>📐 Công Thức Tính</h3>
-                    <p><strong>Bước 1:</strong> Giá cuối = Giá gốc × (1 - %giảm lần 1) × (1 - %giảm lần 2)</p>
-                    <p><strong>Bước 2:</strong> % còn lại = (Giá cuối / Giá gốc) × 100%</p>
-                    <p><strong>Bước 3:</strong> % giảm 1 lần = 100% - % còn lại</p>
+                    <p><strong>Bước 1:</strong> Tổng giá = Giá gốc × Số lượng</p>
+                    <p><strong>Bước 2:</strong> Giá cuối = Tổng giá × (1 - %giảm lần 1) × (1 - %giảm lần 2)</p>
+                    <p><strong>Bước 3:</strong> % còn lại = (Giá cuối / Tổng giá) × 100%</p>
+                    <p><strong>Bước 4:</strong> % giảm 1 lần = 100% - % còn lại</p>
                 </div>
             `;
         }
@@ -525,11 +550,13 @@
             addProduct();
             products[0].name = 'Áo 1';
             products[0].price = 309000;
+            products[0].quantity = 2;
             products[0].discount1 = 20;
             
             addProduct();
             products[1].name = 'Áo 2';
             products[1].price = 315000;
+            products[1].quantity = 1;
             products[1].discount1 = 25;
             
             renderProducts();
